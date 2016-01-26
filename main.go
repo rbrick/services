@@ -1,11 +1,8 @@
 package main
 
 import (
-	"io/ioutil"
 	"math/rand"
 	"net/http"
-	"os"
-	"strings"
 	"time"
 )
 
@@ -23,47 +20,6 @@ func main() {
 	})
 
 	http.ListenAndServe(":80", nil)
-}
-
-// Saves an image from the request
-func saveImage(request *http.Request) {
-	saveFileForm("image/", "img", request)
-}
-
-// Saves a FileForm from the given request
-func saveFileForm(dir, key string, req *http.Request) {
-	file, fileHeader, err := req.FormFile(key)
-	if err != nil {
-		panic(err)
-		return
-	}
-
-	ext := getExtension(fileHeader.Filename)
-
-	defer file.Close()
-	content, err := ioutil.ReadAll(file)
-
-	saveFile(dir, generateRandomString(8), ext, content)
-	return
-}
-
-// Saves a file within the given dir, with the name and extension, and will contain the given contents
-func saveFile(dir, name, extension string, content []byte) {
-	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		os.Mkdir(dir, os.ModeDir)
-	}
-
-	newFile, err := os.Create(dir + "/" + name + extension)
-	if err != nil {
-		panic(err)
-	}
-	defer newFile.Close()
-	newFile.Write(content)
-}
-
-// Get the file extension based off the file name
-func getExtension(filename string) string {
-	return filename[strings.LastIndex(filename, "."):]
 }
 
 // Generate a pseudo-random string of x length
