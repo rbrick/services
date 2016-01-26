@@ -4,6 +4,7 @@ import (
 	"math/rand"
 	"net/http"
 	"time"
+    "github.com/go-martini/martini"
 )
 
 var (
@@ -11,15 +12,24 @@ var (
 	CHARS_LENGTH = len(CHARS)
 )
 
+const BASE_URL = "http://rbrickis.me/"
+
 func main() {
 	rand.Seed(time.Now().UnixNano())
 
+    m := martini.Classic()
+
 	// Handles uploading of images
-	http.HandleFunc("/upload_image", func(response http.ResponseWriter, request *http.Request) {
-		saveImage(request)
+	m.Post("/upload_image", func(response http.ResponseWriter, request *http.Request) {
+		imgName := saveImage(request)
+		response.Write([]byte(BASE_URL + "i/" + imgName))
 	})
 
-	http.ListenAndServe(":80", nil)
+	m.Get("/i", func(response http.ResponseWriter, request *http.Request) {
+		response.Write([]byte(request.RequestURI))
+	})
+
+	m.RunOnAddr(":80")
 }
 
 // Generate a pseudo-random string of x length

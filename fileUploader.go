@@ -8,12 +8,14 @@ import (
 )
 
 // Saves an image from the request
-func saveImage(request *http.Request) {
-	saveFileForm("image/", "img", request)
+func saveImage(request *http.Request) string {
+	imgName := generateRandomString(8)
+	saveFileForm("image/", imgName, "img", request)
+	return imgName
 }
 
 // Saves a FileForm from the given request
-func saveFileForm(dir, key string, req *http.Request) {
+func saveFileForm(dir, name, key string, req *http.Request) {
 	file, fileHeader, err := req.FormFile(key)
 	if err != nil {
 		panic(err)
@@ -25,7 +27,7 @@ func saveFileForm(dir, key string, req *http.Request) {
 	defer file.Close()
 	content, err := ioutil.ReadAll(file)
 
-	saveFile(dir, generateRandomString(8), ext, content)
+	saveFile(dir, name, ext, content)
 	return
 }
 
