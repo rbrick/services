@@ -28,15 +28,22 @@ func main() {
         response.Write([]byte(BASE_URL + "i/" + imgName))
     })
 
-    m.Get("/i/:id", func(response http.ResponseWriter, request *http.Request, params martini.Params) string {
+    m.Get("/i/:id", func(response http.ResponseWriter, request *http.Request, params martini.Params) {
         id := params["id"]
-        file, err := findFile("image/", id + ".png")
+        fileName := "image/" + id + ".png"
 
-        if err != nil {
-            panic(err)
+        if _, err := os.Open(fileName); os.IsNotExist(err) {
+            response.WriteHeader(404)
+            http.ServeFile(response, request, "404.html")
+            return
         }
 
-        return file.Name()
+        response.Header().Set("Content-Type", "image/png")
+        http.ServeFile(response, request, fileName)
+    })
+
+    m.NotFound(func(response http.ResponseWriter, request *http.Request) {
+        http.ServeFile(response, request, "404.html")
     })
 
     m.RunOnAddr(":80")
@@ -46,7 +53,6 @@ func findFile(dir, fileName string) (*os.File, error) {
     if _, err := os.Stat(dir); os.IsNotExist(err) {
         return nil, errors.New("Provided directory does not exist!")
     }
-
 
     var found *os.File
 
