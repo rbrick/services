@@ -40,11 +40,10 @@ func main() {
 
 		if os.IsNotExist(err) {
 			response.WriteHeader(404)
-			http.ServeFile(response, response, "public/404.html")
+			http.ServeFile(response, request, "public/404.html")
 			return
 		}
 
-		response.Header().Set("Content-Type", "image/png")
 		http.ServeFile(response, request, file.Name())
 	})
 
