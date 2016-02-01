@@ -22,10 +22,16 @@ func main() {
 
 	m := martini.Classic()
 
+	m.Use(martini.Static("js"))
+
 	// Handles uploading of images
 	m.Post("/upload_image", func(response http.ResponseWriter, request *http.Request) {
 		imgName := saveImage(request)
 		response.Write([]byte(BASE_URL + "i/" + imgName))
+	})
+
+	m.Get("/shorten", func(response http.ResponseWriter, request *http.Request) {
+		http.ServeFile(response, request, "public/shortener.html")
 	})
 
 	m.Get("/i/:id", func(response http.ResponseWriter, request *http.Request, params martini.Params) {
@@ -34,7 +40,7 @@ func main() {
 
 		if _, err := os.Open(fileName); os.IsNotExist(err) {
 			response.WriteHeader(404)
-			http.ServeFile(response, request, "404.html")
+			http.ServeFile(response, request, "public/404.html")
 			return
 		}
 
@@ -43,7 +49,7 @@ func main() {
 	})
 
 	m.NotFound(func(response http.ResponseWriter, request *http.Request) {
-		http.ServeFile(response, request, "404.html")
+		http.ServeFile(response, request, "public/404.html")
 	})
 
 	m.RunOnAddr(":80")
