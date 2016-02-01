@@ -26,8 +26,12 @@ func main() {
 
 	// Handles uploading of images
 	m.Post("/upload_image", func(response http.ResponseWriter, request *http.Request) {
-		imgName := saveImage(request)
-		response.Write([]byte(BASE_URL + "i/" + imgName))
+		imgName, err := saveImage(request)
+		if err != nil {
+			response.Write([]byte(imgName))
+		} else {
+			response.Write([]byte(BASE_URL + "i/" + imgName))
+		}
 	})
 
 	m.Get("/shorten", func(response http.ResponseWriter, request *http.Request) {
@@ -90,4 +94,14 @@ func generateRandomString(x int) string {
 		result[i] = CHARS[rand.Intn(CHARS_LENGTH)]
 	}
 	return string(result)
+}
+
+// Tests if a element is within a slice/array
+func contains(slice []string, element string) bool {
+	for _, e := range slice {
+		if e == element {
+			return true
+		}
+	}
+	return false
 }

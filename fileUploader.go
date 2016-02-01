@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -8,27 +9,35 @@ import (
 )
 
 // Saves an image from the request
-func saveImage(request *http.Request) string {
+func saveImage(request *http.Request) (string, error) {
 	imgName := generateRandomString(8)
-	saveFileForm("image/", imgName, "img", request)
-	return imgName
+	err := saveFileForm("image/", imgName, "img", request, []string{".jpeg", ".jpg", ".png", ".gif"})
+
+	if err != nil {
+		return "Unable to upload image!", err
+	}
+	return imgName, nil
 }
 
 // Saves a FileForm from the given request
-func saveFileForm(dir, name, key string, req *http.Request) {
+func saveFileForm(dir, name, key string, req *http.Request, allowedExtensions []string) error {
 	file, fileHeader, err := req.FormFile(key)
 	if err != nil {
 		panic(err)
-		return
+		return err
 	}
 
 	ext := getExtension(fileHeader.Filename)
 
 	defer file.Close()
-	content, err := ioutil.ReadAll(file)
 
-	saveFile(dir, name, ext, content)
-	return
+	if contains(allowedExtensions, ext) || len(allowedExtensions) < 1 {
+		content, _ := ioutil.ReadAll(file)
+		saveFile(dir, name, ext, content)
+		return nil
+	}
+
+	return errors.New("Unable to save file!")
 }
 
 // Saves a file within the given dir, with the name and extension, and will contain the given contents
