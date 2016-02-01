@@ -14,9 +14,10 @@
   </head>
 
   <center>
-     <form method="post" action="/shorten" onsubmit="testForURL(document.getElementById('url-box'))">
+     <form method="post" action="/shorten" onsubmit="return testForURL(document.getElementById('url-box'))">
         <div class="form-group" id="form-div">
-            <input class="form-control" accept="text/plain" type="text" id="url-box" oninput="testForURL(document.getElementById('url-box'))"/>
+            <input class="form-control" accept="text/plain" type="text" id="url-box" name="url" oninput="testForURL(document.getElementById('url-box'))"/>
+            <input class="form-control" type="submit" value="Shorten!"/>
         </div>
      </form>
  </center>
