@@ -8,10 +8,12 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+	"fmt"
+	"strings"
 )
 
 var (
-	CHARS        = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
+	CHARS = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
 	CHARS_LENGTH = len(CHARS)
 )
 
@@ -36,10 +38,14 @@ func main() {
 
 	m.Get("/i/:id", func(response http.ResponseWriter, request *http.Request, params martini.Params) {
 		id := params["id"]
-		fileName := "image/" + id + ".png"
+		file, err := findFile("image/", id)
 
+		if os.IsNotExist(err) {
+			response.WriteHeader(404)
+			return
+		}
 		response.Header().Set("Content-Type", "image/png")
-		http.ServeFile(response, request, fileName)
+		http.ServeFile(response, request, file.Name())
 	})
 
 	m.NotFound(func(response http.ResponseWriter, request *http.Request) {
@@ -57,7 +63,14 @@ func findFile(dir, fileName string) (*os.File, error) {
 	var found *os.File
 
 	visit := func(path string, info os.FileInfo, err error) error {
-		if info.Name() == fileName {
+		if info.IsDir() {
+			return nil
+		}
+
+		fmt.Println(info.Name())
+		ext := getExtension(info.Name())
+
+		if strings.Replace(info.Name(), ext, "", 1) == fileName {
 			found, _ = os.Open(path)
 		}
 		return nil
