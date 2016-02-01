@@ -1,19 +1,17 @@
 package main
 
 import (
-	"errors"
 	"github.com/go-martini/martini"
 	"math/rand"
 	"net/http"
 	"os"
 	"path/filepath"
-	"time"
-	"fmt"
 	"strings"
+	"time"
 )
 
 var (
-	CHARS = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
+	CHARS        = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
 	CHARS_LENGTH = len(CHARS)
 )
 
@@ -57,7 +55,7 @@ func main() {
 
 func findFile(dir, fileName string) (*os.File, error) {
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		return nil, errors.New("Provided directory does not exist!")
+		return nil, err
 	}
 
 	var found *os.File
@@ -67,7 +65,6 @@ func findFile(dir, fileName string) (*os.File, error) {
 			return nil
 		}
 
-		fmt.Println(info.Name())
 		ext := getExtension(info.Name())
 
 		if strings.Replace(info.Name(), ext, "", 1) == fileName {
@@ -77,6 +74,11 @@ func findFile(dir, fileName string) (*os.File, error) {
 	}
 
 	filepath.Walk(dir, visit)
+
+	if found == nil {
+		return nil, os.ErrNotExist
+	}
+
 	return found, nil
 }
 
