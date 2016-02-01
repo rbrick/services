@@ -1,25 +1,34 @@
+
+
 <html>
-  <head>
+   <head>
       <title>URL Shortener</title>
       <script src="js/script.js"></script>
-
       <!-- jQuery -->
       <script src="http://code.jquery.com/jquery-1.12.0.min.js"></script>
       <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-
       <!-- Bootstrap: Latest compiled and minified CSS -->
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
       <!-- Bootstrap: Latest compiled and minified JavaScript -->
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-  </head>
+      <style>
+        .center {
+           text-align: center;
+           margin-left: auto;
+           margin-right: auto;
+        }
+      </style>
+   </head>
 
-  <center>
-     <form method="post" action="/shorten" onsubmit="return testForURL(document.getElementById('url-box'))">
-        <div class="form-group" id="form-div">
-            <input class="form-control" accept="text/plain" type="text" id="url-box" name="url" oninput="testForURL(document.getElementById('url-box'))"/>
-            <input class="form-control" type="submit" value="Shorten!"/>
-        </div>
-     </form>
- </center>
+  <h1 class="center">Dead Simple URL Shortener</h1>
 
+   <form method="post" action="/shorten" onsubmit="return testForURL(document.getElementById('url-box'))">
+      <div class="row">
+         <div class="form-group" id="form-div">
+            <div class="col-md-4"></div>
+            <input class="form-control has-success col-md-6" style="width: 300px;" accept="text/plain" type="text" id="url-box" name="url" oninput="testForURL(document.getElementById('url-box'))"/>
+            <input class="form-control col-md-4" style="width: 150px; background-color: #96D8DE; margin-right: auto; margin-left: auto; text-align: center;" type="submit" value="Shorten!"/>
+         </div>
+      </div>
+   </form>
 </html>

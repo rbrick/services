@@ -38,12 +38,6 @@ func main() {
 		id := params["id"]
 		fileName := "image/" + id + ".png"
 
-		if _, err := os.Open(fileName); os.IsNotExist(err) {
-			response.WriteHeader(404)
-			http.ServeFile(response, request, "public/404.html")
-			return
-		}
-
 		response.Header().Set("Content-Type", "image/png")
 		http.ServeFile(response, request, fileName)
 	})
