@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/go-martini/martini"
 	"math/rand"
 	"net/http"
@@ -36,6 +38,57 @@ func main() {
 
 	m.Get("/shorten", func(response http.ResponseWriter, request *http.Request) {
 		http.ServeFile(response, request, "public/shortener.html")
+	})
+
+	/*
+	  What really needs to happen:
+	    Make an post request to this path ON THE JAVASCRIPT (CLIENT SIDE!)
+	    Return JSON in the /shorten path
+	    Parse the JSON in the javascript
+	*/
+
+	m.Post("/api/shorten", func(response http.ResponseWriter, request *http.Request) {
+		err := request.ParseForm()
+
+		if err != nil {
+			panic(err)
+		}
+
+		url := request.FormValue("longUrl")
+		code, err := shorten(url)
+
+		if err != nil {
+			panic(err)
+		}
+
+		type ShortenUrl struct {
+			Result string `json:"result"`
+			AsUrl  string `json:"url"`
+		}
+
+		surl := ShortenUrl{code, "dsurl.xyz/s/" + code}
+		json, err := json.Marshal(surl)
+
+		if err != nil {
+			panic(err)
+		}
+
+		response.Header().Set("Content-Type", "application/json")
+		response.Write(json)
+	})
+
+	m.Get("/s/:id", func(response http.ResponseWriter, request *http.Request, params martini.Params) {
+		id := params["id"]
+
+		if hasLongUrl(id) {
+			redirectLink := getLongUrl(id)
+
+			if !strings.HasPrefix(redirectLink, "http://") && !strings.HasPrefix(redirectLink, "https://") {
+				redirectLink = fmt.Sprintln("http://", redirectLink)
+			}
+
+			http.Redirect(response, request, redirectLink, 307)
+		}
 	})
 
 	m.Get("/i/:id", func(response http.ResponseWriter, request *http.Request, params martini.Params) {

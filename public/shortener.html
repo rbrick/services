@@ -1,5 +1,5 @@
 
-
+<!DOCTYPE html>
 <html>
    <head>
       <title>URL Shortener</title>
@@ -7,6 +7,7 @@
       <!-- jQuery -->
       <script src="http://code.jquery.com/jquery-1.12.0.min.js"></script>
       <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+      <link href='https://fonts.googleapis.com/css?family=Roboto:400,500,700' rel='stylesheet' type='text/css'>
       <!-- Bootstrap: Latest compiled and minified CSS -->
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
       <!-- Bootstrap: Latest compiled and minified JavaScript -->
@@ -17,17 +18,70 @@
            margin-left: auto;
            margin-right: auto;
         }
+
+        /*
+        found on http://codepen.io/taylorvowell/pen/BkxbC
+        */
+        .background-1:default {
+           background: #282537;
+           background-image: radial-gradient(top, circle cover, #3c3b52 0%, #252233 80%);
+           background-image: -webkit-radial-gradient(top, circle cover, #3c3b52 0%, #252233 80%);
+           background-image: -moz-radial-gradient(top, circle cover, #3c3b52 0%, #252233 80%);
+           background-image: -o-radial-gradient(top, circle cover, #3c3b52 0%, #252233 80%);
+           background-image: radial-gradient(top, circle cover, #3c3b52 0%, #252233 80%);
+        }
+
+        .background-1:active {
+           background: #282537;
+           background-image: -webkit-radial-gradient(top, circle cover, #252233 0%, #3c3b52 80%);
+           background-image: -moz-radial-gradient(top, circle cover, #252233 0%, #3c3b52 80%);
+           background-image: -o-radial-gradient(top, circle cover, #252233 0%, #3c3b52 80%);
+           background-image: radial-gradient(top, circle cover, #252233  0%, #3c3b52 80%);
+        }
+
+        .roboto-font {
+            font-family: "Roboto", sans-serif;
+            font-size: 5em;
+            font-weight: 400;
+            font-variant: normal;
+        }
       </style>
+      <script>
+      window.addEventListener('load', function(event) {
+         var urlForm = document.getElementById('url-shortener-form');
+
+         urlForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            var textBox = document.getElementById('url-box');
+
+             if (isValid(textBox.value)) {
+                $.ajax({
+                    url: '/api/shorten',
+                    type: 'POST',
+                    data: ({longUrl: textBox.value}),
+                    success: function(data) {
+                      var result = data.url;
+                      document.getElementById('header').innerHTML = result;
+                    }
+                });
+              } else {
+                 alert('Invalid URL!');
+              }
+           });
+      });
+
+      </script>
    </head>
 
-  <h1 class="center">Dead Simple URL Shortener</h1>
+  <h1 class="center roboto-font" id="header">Dead Simple URL Shortener</h1>
 
-   <form method="post" action="/shorten" onsubmit="return testForURL(document.getElementById('url-box'))">
+   <form id="url-shortener-form">
       <div class="row">
          <div class="form-group" id="form-div">
             <div class="col-md-4"></div>
-            <input class="form-control has-success col-md-6" style="width: 300px;" accept="text/plain" type="text" id="url-box" name="url" oninput="testForURL(document.getElementById('url-box'))"/>
-            <input class="form-control col-md-4" style="width: 150px; background-color: #96D8DE; margin-right: auto; margin-left: auto; text-align: center;" type="submit" value="Shorten!"/>
+            <input class="form-control has-success col-md-6" style="width: 300px;" accept="text/plain" type="text" id="url-box" name="longUrl" oninput="testForURL(document.getElementById('url-box'))"/>
+            <input class="background-1 roboto-font form-control col-md-4" style="width: 150px; font-size: 1em; color: white" type="submit" value="Shorten!"/>
          </div>
       </div>
    </form>
