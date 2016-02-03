@@ -22,25 +22,3 @@ function testForURL(textBox) {
    return valid;
 }
 
-function sendRequest() {
-  var form = document.getElementById('url-shortener-form');
-  var textBox = document.getElementById('url-box');
-
-  if (!isValid(textBox)) return false;
-
-  $.ajax({
-    url: '/api/shorten',
-    data: {
-      longUrl: textBox.value
-    },
-    type: 'POST',
-  }).fail(function() {alert("FAILURE");}).always(function() {
-    alert("Done");
-  });
-
-  return true;
-}
-
-function test() {
-   alert("test!");
-}

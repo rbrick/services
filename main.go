@@ -66,7 +66,7 @@ func main() {
 			AsUrl  string `json:"url"`
 		}
 
-		surl := ShortenUrl{code, "dsurl.xyz/s/" + code}
+		surl := ShortenUrl{code, "rbrickis.me/s/" + code}
 		json, err := json.Marshal(surl)
 
 		if err != nil {
