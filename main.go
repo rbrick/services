@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/go-martini/martini"
 	"math/rand"
 	"net/http"
@@ -84,7 +83,7 @@ func main() {
 			redirectLink := getLongUrl(id)
 
 			if !strings.HasPrefix(redirectLink, "http://") && !strings.HasPrefix(redirectLink, "https://") {
-				redirectLink = fmt.Sprintln("http://", redirectLink)
+				redirectLink = "http://" + redirectLink
 			}
 
 			http.Redirect(response, request, redirectLink, 307)
